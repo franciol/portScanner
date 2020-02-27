@@ -1,20 +1,20 @@
 # portScanner
 
-Usage: sudo portScanner -H <target host> -p <target port> {-t|-u|-r}
+ Usage:  sudo portScanner -H <target host> -p <target port> {-t|-u|-r}
 
 Options:
 
-  -h, --help  show this help message and exit
+    -h, --help  show this help message and exit
   
-  -H TGTHOST  specify target host
+    -H TGTHOST  specify target host
   
-  -p TGTPORT  specify target port[s] separated by comma
+    -p TGTPORT  specify target port[s] separated by comma
   
-  -u          Scan UDP connections
+    -u          Scan UDP connections
   
-  -t          Scan TCP connections
+    -t          Scan TCP connections
   
-  -r          Use range of ports instead of specific ports. Separated by "-"
+    -r          Use range of ports instead of specific ports. Separated by "-"
   
   
   
