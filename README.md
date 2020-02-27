@@ -1,6 +1,8 @@
 # portScanner
 
- Usage:  sudo portScanner -H <target host> -p <target port> {-t|-u|-r}
+Usage:  
+ 
+    sudo portScanner -H <target host> -p <target port> {-t|-u|-r}
 
 Options:
 
