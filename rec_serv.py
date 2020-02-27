@@ -1,0 +1,113 @@
+import optparse
+import nmap
+
+
+def connScanTCP(tgtHost, tgtPort, nm):
+    try:
+        ss = nm.scan(tgtHost, tgtPort)
+        # print(ss['scan'][tgtHost]['tcp'])
+        return ss['scan'][tgtHost]
+    except Exception as er:
+        print(er)
+
+
+def connScanUDP(tgtHost, tgtPort, nm):
+    try:
+        ss = nm.scan(tgtHost, tgtPort, arguments=' -sU')
+        # print(ss['scan'][tgtHost]['tcp'])
+        return ss['scan'][tgtHost]
+    except Exception as er:
+        print(er)
+
+
+def portScan(tgtHost, tgtPorts, tcp, udp):
+    nm = nmap.PortScanner()
+    ss = []
+    if(udp):
+        for i in tgtPorts:
+            ss.append(connScanUDP(tgtHost, str(i), nm))
+    if(tcp):
+        for i in tgtPorts:
+            ss.append(connScanTCP(tgtHost, str(i), nm))
+
+    try:
+        host_name = nm[tgtHost].hostname()
+    except:
+        host_name = nm.all_hosts()
+
+    print("Host : %s (%s)\n" % (host_name, nm.all_hosts()[0]))
+    if(udp):
+        print("\nUDP connections:\n")
+        for i in range(0, len(ss)):
+            try:
+                port = int(tgtPorts[i])
+                if(ss[i]['udp'][port]['state'] == "closed"):
+                    string = "Porta %3d: State:     %14s" % (
+                        port, ss[i]['udp'][port]['state'])
+                else:
+                    string = "Porta %3d: State:     %14s            Name: %11s" % (
+                        port, ss[i]['udp'][port]['state'], ss[i]['udp'][port]['name'])
+                # print(ss[i]['udp'][port])
+                print(string)
+            except Exception as er:
+                print(er)
+                pass
+    if(tcp):
+        print("\nTCP connections:\n")
+        for j in range(0, len(ss)):
+            try:
+                port = int(tgtPorts[j])
+                string = "Porta %3d: State:     %14s            Name: %11s" % (
+                    port, ss[j]['tcp'][port]['state'], ss[j]['tcp'][port]['name'])
+                print(string)
+            except Exception as er:
+                # print(er)
+                pass
+
+
+def main():
+    parser = optparse.OptionParser(
+        'usage %prog -H <target host> -p <target port> {-t|-u}')
+
+    parser.add_option('-H', dest='tgtHost', type='string',
+                      help='specify target host')
+    parser.add_option('-p', dest='tgtPort', type='string',
+                      help='specify target port[s] separated by comma')
+    parser.add_option('-u', dest='tgtUDP', action='store_true',
+                      help='Scan UDP connections')
+    parser.add_option('-t', dest='tgtTCP', action='store_true',
+                      help='Scan TCP connections')
+    parser.add_option('-r', dest='tgtRange', action='store_true',
+                      help='Use range of ports instead of specific ports. Separated by "-"')
+
+    (options, args) = parser.parse_args()
+
+    tgtHost = options.tgtHost
+    tgtUdp = options.tgtUDP
+    tgtTcp = options.tgtTCP
+    tgtRange = options.tgtRange
+
+    if (tgtTcp == None):
+        tgtTcp = False
+    if (tgtUdp == None):
+        tgtUdp = False
+    if (tgtRange == None):
+        tgtRange = False
+    if(tgtRange):
+
+        tgtPorts1 = str(options.tgtPort).split("-")
+        tgtPorts = range(int(tgtPorts1[0]), int(tgtPorts1[1])+1)
+    else:
+        tgtPorts = int(str(options.tgtPort).split(", "))
+
+    if(tgtHost == None) or (tgtPorts[0] == 'None'):
+        print(parser.usage)
+        exit(0)
+    elif(tgtUdp == False and tgtTcp == False):
+        print("Error...\nPlease select UDP(-u) or TCP(-t) scan")
+        exit(0)
+    portScan(tgtHost, tgtPorts, tgtTcp, tgtUdp)
+
+
+if __name__ == "__main__":
+    main()
