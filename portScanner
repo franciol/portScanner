@@ -46,7 +46,7 @@ def portScan(tgtHost, tgtPorts, tcp, udp):
                     string = "Porta %3d: State:     %14s" % (
                         port, ss[i]['udp'][port]['state'])
                 else:
-                    string = "Porta %3d: State:     %14s            Name: %11s" % (
+                    string = "Porta %3d: \n State: %14s \n  Name:  %14s\n" % (
                         port, ss[i]['udp'][port]['state'], ss[i]['udp'][port]['name'])
                 # print(ss[i]['udp'][port])
                 print(string)
@@ -58,7 +58,7 @@ def portScan(tgtHost, tgtPorts, tcp, udp):
         for j in range(0, len(ss)):
             try:
                 port = int(tgtPorts[j])
-                string = "Porta %3d: State:     %14s            Name: %11s" % (
+                string = "Porta %3d: \nState: %14s \nName: %14s\n" % (
                     port, ss[j]['tcp'][port]['state'], ss[j]['tcp'][port]['name'])
                 print(string)
             except Exception as er:
@@ -68,7 +68,7 @@ def portScan(tgtHost, tgtPorts, tcp, udp):
 
 def main():
     parser = optparse.OptionParser(
-        'usage %prog -H <target host> -p <target port> {-t|-u}')
+        'usage: sudo %prog -H <target host> -p <target port> {-t|-u|-r}')
 
     parser.add_option('-H', dest='tgtHost', type='string',
                       help='specify target host')
@@ -99,7 +99,7 @@ def main():
         tgtPorts1 = str(options.tgtPort).split("-")
         tgtPorts = range(int(tgtPorts1[0]), int(tgtPorts1[1])+1)
     else:
-        tgtPorts = int(str(options.tgtPort).split(", "))
+        tgtPorts = str(options.tgtPort).split(", ")
 
     if(tgtHost == None) or (tgtPorts[0] == 'None'):
         print(parser.usage)
